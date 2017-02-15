@@ -15,11 +15,8 @@
 
 @property (weak, nonatomic) IBOutlet UILabel *timeLabel;
 
-@property (nonatomic, assign) NSTimeInterval time;
-
-// 记得强持有
+// 强持有
 @property (nonatomic, strong) ZYTimer *timer;
-
 
 @end
 
@@ -41,27 +38,33 @@ static ZYTest *_obj = nil;
     [super viewDidLoad];
     // Do any additional setup after loading the view, typically from a nib.
     
-    _obj = [[ZYTest alloc] init];
+    
+    // 1. target selector
     
     // case1: 默认依赖 target 的生命周期
-//    ZYTimer *timer = [ZYTimer timerWithTimeInterval:1 target:self selector:@selector(ceshi) repeats:YES lifeDependObject:nil];
+//    ZYTimer *timer = [ZYTimer timerWithTimeInterval:0.1 target:self selector:@selector(ceshi:) repeats:YES userInfo:nil lifeDependObject:nil];
     
     // case2: 虽然 target 不会释放，但是依赖了 self，所以 self 释放的之后 timer 也会释放
-    ZYTimer *timer = [ZYTimer timerWithTimeInterval:30 target:_obj selector:@selector(life) repeats:YES lifeDependObject:self];
+//    _obj = [[ZYTest alloc] init];
+//    ZYTimer *timer = [ZYTimer timerWithTimeInterval:1 target:_obj selector:@selector(life) repeats:YES  userInfo:nil lifeDependObject:nil];
     
-//    ZYTimer *timer = [ZYTimer timerWithTimeInterval:3 repeats:YES lifeDependObject:self block:^(ZYTimer * _Nonnull timer, NSTimeInterval currentTime) {
-//        NSLog(@"%f", currentTime);
-//    }];
+    
+    // 2. block
+    
+    __weak typeof(self) weakSelf = self;
+    ZYTimer *timer = [ZYTimer timerWithTimeInterval:0.1 repeats:YES userInfo:nil lifeDependObject:self block:^(ZYTimer * _Nonnull timer, NSTimeInterval currentTime) {
+        NSLog(@"%f", currentTime);
+        weakSelf.timeLabel.text = [NSString stringWithFormat:@"%f", timer.currentTime];
+    }];
+    
     
     self.timer = timer;
-    
 }
 
-- (void)ceshi
+- (void)ceshi:(ZYTimer *)timer
 {
-    self.time ++ ;
-    
-    self.timeLabel.text = [NSString stringWithFormat:@"%f", self.time];
+    NSLog(@"%f", timer.currentTime);
+    self.timeLabel.text = [NSString stringWithFormat:@"%f", timer.currentTime];
 }
 
 

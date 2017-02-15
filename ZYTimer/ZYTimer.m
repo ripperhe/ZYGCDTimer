@@ -14,9 +14,10 @@
 
 @property (nonatomic, assign) BOOL isTarget;
 @property (nonatomic, assign) BOOL isPause;
-@property (getter=isValid) BOOL valid;
-@property (nonatomic, assign) NSTimeInterval currentTime;
+@property (nonatomic, assign) BOOL isValid;
+@property (nonatomic, assign) BOOL hasSkipFirstTime;
 
+@property (nonatomic, assign) NSTimeInterval currentTime;
 @property (nonatomic, weak) NSTimer *timer;
 
 @property (nonatomic, weak) id aTarget;
@@ -26,6 +27,7 @@
 @property (nonatomic, assign) NSTimeInterval interval;
 @property (nonatomic, assign) BOOL isRepeats;
 @property (nonatomic, weak) id lifeDependObject;
+@property (nonatomic, strong) id userInfo;
 
 @end
 
@@ -36,42 +38,46 @@
     NSLog(@"ZYTimer dealloc");
 }
 
-+ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval target:(nonnull id)aTarget selector:(nonnull SEL)aSelector repeats:(BOOL)repeats lifeDependObject:(id)lifeDependObject
+- (instancetype)initWithInterval:(NSTimeInterval)interval repeats:(BOOL)repeats userInfo:(id)userInfo lifeDependObject:(id)lifeDependObject {
+    if (self = [super init]) {
+        self.interval = interval;
+        self.isRepeats = repeats;
+        self.lifeDependObject = lifeDependObject;
+        self.userInfo = userInfo;
+        
+        self.isPause = YES;
+        self.isValid = YES;
+        self.hasSkipFirstTime = NO;
+    }
+    return self;
+}
+
++ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval target:(nonnull id)aTarget selector:(nonnull SEL)aSelector repeats:(BOOL)repeats userInfo:(id)userInfo lifeDependObject:(id)lifeDependObject
 {
-    ZYTimer *timer = [[ZYTimer alloc] init];
+    ZYTimer *timer = [[ZYTimer alloc] initWithInterval:interval
+                                               repeats:repeats
+                                              userInfo:userInfo
+                                      lifeDependObject:lifeDependObject?lifeDependObject:aTarget];
     timer.aTarget = aTarget;
     timer.aSelector = aSelector;
-    timer.interval = interval;
-    timer.isRepeats = repeats;
-    timer.lifeDependObject = lifeDependObject?lifeDependObject:aTarget;
-    
     timer.isTarget = YES;
-    timer.isPause = YES;
-    timer.valid = YES;
-    timer.currentTime = -1;
-
     return timer;
 }
 
-+ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats lifeDependObject:(id)lifeDependObject block:(ZYCallbackBlock)block
++ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats userInfo:(id)userInfo lifeDependObject:(id)lifeDependObject block:(ZYCallbackBlock)block
 {
-    ZYTimer *timer = [[ZYTimer alloc] init];
+    ZYTimer *timer = [[ZYTimer alloc] initWithInterval:interval
+                                               repeats:repeats
+                                              userInfo:userInfo
+                                      lifeDependObject:lifeDependObject];
     timer.callbackBlock = block;
-    timer.interval = interval;
-    timer.isRepeats = repeats;
-    timer.lifeDependObject = lifeDependObject;
-    
     timer.isTarget = NO;
-    timer.isPause = YES;
-    timer.valid = YES;
-    timer.currentTime = -1;
-    
     return timer;
 }
 
 - (void)fire
 {
-    if (self.valid == YES) {
+    if (self.isValid == YES) {
         if (self.isPause == YES) {
             self.isPause = NO;
         }else{
@@ -96,6 +102,7 @@
 - (void)pause
 {
     self.isPause = YES;
+    self.hasSkipFirstTime = NO;
     
     [self.timer invalidate];
     self.timer = nil;
@@ -103,7 +110,7 @@
 
 - (void)invalidate
 {
-    self.valid = NO;
+    self.isValid = NO;
     
     [self.timer invalidate];
     self.timer = nil;
@@ -115,6 +122,7 @@
     self.interval = 0;
     self.isRepeats = NO;
     self.lifeDependObject = nil;
+    self.userInfo = nil;
 }
 
 #pragma mark - 处理定时器回调
@@ -132,9 +140,9 @@
         return;
     }
     
-    if (self.currentTime < 0) {
+    if (self.hasSkipFirstTime == NO) {
         // 开启定时器会立即调用该方法，所以忽略第一次调用
-        self.currentTime = 0;
+        self.hasSkipFirstTime = YES;
         return;
     }
     
@@ -147,7 +155,7 @@
             if ([self.aTarget respondsToSelector:self.aSelector]) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-                [self.aTarget performSelector:self.aSelector];
+                [self.aTarget performSelector:self.aSelector withObject:self];
 #pragma clang diagnostic pop
             }else{
                 NSLog(@"ZYTimer: target 没有对应的 selector，请检查");

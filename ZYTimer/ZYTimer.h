@@ -18,6 +18,7 @@ typedef void (^ZYCallbackBlock)(ZYTimer * _Nonnull timer, NSTimeInterval current
 
 @property (nonatomic, assign, readonly) NSTimeInterval interval;
 
+@property (nonatomic, strong, readonly, nullable) id userInfo;
 
 
 
@@ -28,10 +29,11 @@ typedef void (^ZYCallbackBlock)(ZYTimer * _Nonnull timer, NSTimeInterval current
  @param aTarget 对象
  @param aSelector 方法
  @param repeats 是否重复
+ @param userInfo 用户信息
  @param lifeDependObject 定时器随着该对象的销毁而销毁，默认为 target
  @return ZYTimer 对象
  */
-+ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval target:(nonnull id)aTarget selector:(nonnull SEL)aSelector repeats:(BOOL)repeats lifeDependObject:(nullable id)lifeDependObject;
++ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval target:(nonnull id)aTarget selector:(nonnull SEL)aSelector repeats:(BOOL)repeats userInfo:(nullable id)userInfo lifeDependObject:(nullable id)lifeDependObject;
 
 
 /**
@@ -39,11 +41,12 @@ typedef void (^ZYCallbackBlock)(ZYTimer * _Nonnull timer, NSTimeInterval current
 
  @param interval 周期
  @param repeats 是否重复
+ @param userInfo 用户信息
  @param lifeDependObject 定时器随着该对象的销毁而销毁，不能传空值
  @param block 回调的block
  @return ZYTimer 对象
  */
-+ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats lifeDependObject:(nonnull id)lifeDependObject block:(nonnull ZYCallbackBlock)block;
++ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats userInfo:(nullable id)userInfo lifeDependObject:(nonnull id)lifeDependObject block:(nonnull ZYCallbackBlock)block;
 
 /**
  开始
