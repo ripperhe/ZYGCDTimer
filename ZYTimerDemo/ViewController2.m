@@ -17,6 +17,7 @@
 
 @property (nonatomic, assign) NSTimeInterval time;
 
+// 记得强持有
 @property (nonatomic, strong) ZYTimer *timer;
 
 
@@ -31,6 +32,9 @@ static ZYTest *_obj = nil;
 - (void)dealloc
 {
     NSLog(@"ViewController2 dealloc");
+    
+    // 如果不加这句，timer 会在一个循环周期内释放；如果加上，则会在控制器销毁的时候
+//    [self.timer invalidate];
 }
 
 - (void)viewDidLoad {
@@ -39,17 +43,17 @@ static ZYTest *_obj = nil;
     
     _obj = [[ZYTest alloc] init];
     
-    ZYTimer *timer = [ZYTimer timerWithTimeInterval:1 target:self selector:@selector(ceshi) repeats:YES lifeDependObject:self];
+    // case1: 默认依赖 target 的生命周期
+//    ZYTimer *timer = [ZYTimer timerWithTimeInterval:1 target:self selector:@selector(ceshi) repeats:YES lifeDependObject:nil];
     
+    // case2: 虽然 target 不会释放，但是依赖了 self，所以 self 释放的之后 timer 也会释放
+    ZYTimer *timer = [ZYTimer timerWithTimeInterval:30 target:_obj selector:@selector(life) repeats:YES lifeDependObject:self];
     
 //    ZYTimer *timer = [ZYTimer timerWithTimeInterval:3 repeats:YES lifeDependObject:self block:^(ZYTimer * _Nonnull timer, NSTimeInterval currentTime) {
 //        NSLog(@"%f", currentTime);
 //    }];
     
-    
     self.timer = timer;
-    
-    
     
 }
 

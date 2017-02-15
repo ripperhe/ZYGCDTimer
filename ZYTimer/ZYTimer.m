@@ -121,13 +121,13 @@
 - (void)handleTimerCallBack
 {
     if (self.isPause) {
-        NSLog(@"这里应该不会调用吧");
+        NSLog(@"这里应该不会调用吧，先这样吧，保险点");
         [self pause];
         return;
     }
     
     if (self.isValid == NO) {
-        NSLog(@"这里应该不会调用吧");
+        NSLog(@"这里应该不会调用吧，先这样吧，保险点");
         [self invalidate];
         return;
     }
@@ -150,12 +150,16 @@
                 [self.aTarget performSelector:self.aSelector];
 #pragma clang diagnostic pop
             }else{
+                NSLog(@"ZYTimer: target 没有对应的 selector，请检查");
                 [self invalidate];
             }
         }else{
             // block 类型
             if (self.callbackBlock) {
                 self.callbackBlock(self, self.currentTime);
+            }else{
+                NSLog(@"ZYTimer: callbackBlock 为空，请检查");
+                [self invalidate];
             }
         }
         
