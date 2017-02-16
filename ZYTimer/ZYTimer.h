@@ -10,9 +10,11 @@
 #import <Foundation/Foundation.h>
 @class ZYTimer;
 
-typedef void (^ZYCallbackBlock)(ZYTimer * _Nonnull timer, NSTimeInterval currentTime);
+typedef void (^ZYCallbackBlock)(ZYTimer * _Nonnull timer, NSTimeInterval currentTime, NSInteger repeatCount);
 
 @interface ZYTimer : NSObject
+
+@property (nonatomic, assign, readonly) NSInteger repeatCount;
 
 @property (nonatomic, assign, readonly) NSTimeInterval currentTime;
 
@@ -59,7 +61,7 @@ typedef void (^ZYCallbackBlock)(ZYTimer * _Nonnull timer, NSTimeInterval current
 - (void)pause;
 
 /**
- 销毁
+ 销毁，调用该方法后不可重新 fire
  */
 - (void)invalidate;
 

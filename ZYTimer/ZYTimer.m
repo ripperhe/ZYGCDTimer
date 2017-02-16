@@ -17,6 +17,7 @@
 @property (nonatomic, assign) BOOL isValid;
 @property (nonatomic, assign) BOOL hasSkipFirstTime;
 
+@property (nonatomic, assign) NSInteger repeatCount;
 @property (nonatomic, assign) NSTimeInterval currentTime;
 @property (nonatomic, weak) NSTimer *timer;
 
@@ -148,6 +149,7 @@
     
     // 处理定时器回调
     if (self.lifeDependObject) {
+        self.repeatCount ++;
         self.currentTime += self.interval;
         
         if (_isTarget) {
@@ -164,7 +166,7 @@
         }else{
             // block 类型
             if (self.callbackBlock) {
-                self.callbackBlock(self, self.currentTime);
+                self.callbackBlock(self, self.currentTime, self.repeatCount);
             }else{
                 NSLog(@"ZYTimer: callbackBlock 为空，请检查");
                 [self invalidate];

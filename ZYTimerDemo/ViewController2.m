@@ -52,8 +52,8 @@ static ZYTest *_obj = nil;
     // 2. block
     
     __weak typeof(self) weakSelf = self;
-    ZYTimer *timer = [ZYTimer timerWithTimeInterval:0.1 repeats:YES userInfo:nil lifeDependObject:self block:^(ZYTimer * _Nonnull timer, NSTimeInterval currentTime) {
-        NSLog(@"%f", currentTime);
+    ZYTimer *timer = [ZYTimer timerWithTimeInterval:0.1 repeats:YES userInfo:nil lifeDependObject:self block:^(ZYTimer * _Nonnull timer, NSTimeInterval currentTime, NSInteger repeatCount) {
+        NSLog(@"count:%zd, timer:%f", repeatCount, currentTime);
         weakSelf.timeLabel.text = [NSString stringWithFormat:@"%f", timer.currentTime];
     }];
     
@@ -69,13 +69,19 @@ static ZYTest *_obj = nil;
 
 
 - (IBAction)start:(id)sender {
-    [self.timer fire];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // 不同线程开启关闭，并没有发现什么问题啊，怎么回事
+        [self.timer fire];
+    });
 }
 - (IBAction)pause:(id)sender {
     [self.timer pause];
 }
 - (IBAction)destroy:(id)sender {
-    [self.timer invalidate];
+    dispatch_async(dispatch_get_global_queue(0, 0), ^{
+        // 不同线程开启关闭，并没有发现什么问题啊，怎么回事
+        [self.timer invalidate];
+    });
 }
 
 @end
