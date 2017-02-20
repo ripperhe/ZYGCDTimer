@@ -21,14 +21,19 @@
     } _timerFlags;
 }
 
-@property (nonatomic, assign) NSTimeInterval interval;
 @property (nonatomic, weak) id target;
 @property (nonatomic, assign) SEL selector;
+@property (nonatomic, strong) ZYGCDTimerCallbackBlock block;
+@property (nonatomic, assign) NSTimeInterval interval;
 @property (nonatomic, strong) id userInfo;
 @property (nonatomic, assign) BOOL isRepeats;
 
 @property (nonatomic, strong) dispatch_queue_t privateSerialQueue;
 @property (nonatomic, strong) dispatch_source_t timer;
+
+@property (nonatomic, assign) BOOL isTarget;
+@property (nonatomic, assign) NSTimeInterval currentTime;
+@property (nonatomic, assign) NSInteger repeatCount;
 
 @end
 
@@ -58,26 +63,21 @@
         self.privateSerialQueue = dispatch_queue_create([privateQueueName cStringUsingEncoding:NSASCIIStringEncoding], DISPATCH_QUEUE_SERIAL);
         dispatch_set_target_queue(self.privateSerialQueue, dispatchQueue);
         
-        [self createTimer];
+        self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER,
+                                            0,
+                                            0,
+                                            self.privateSerialQueue);
+        
+        __weak typeof(self) weakSelf = self;
+        dispatch_source_set_event_handler(self.timer, ^{
+            [weakSelf timerCallback];
+        });
+        dispatch_resume(self.timer);
     }
     return self;
 }
 
 #pragma mark - private methods
-
-- (void)createTimer
-{
-    self.timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER,
-                                        0,
-                                        0,
-                                        self.privateSerialQueue);
-    
-    __weak typeof(self) weakSelf = self;
-    dispatch_source_set_event_handler(self.timer, ^{
-        [weakSelf timerCallback];
-    });
-    dispatch_resume(self.timer);
-}
 
 - (void)setupTime
 {
@@ -102,10 +102,20 @@
     ZYGCDTimer *timer = [[ZYGCDTimer alloc] initWithTimeInterval:interval userInfo:userInfo repeats:repeats dispatchQueue:dispatchQueue];
     timer.target = aTarget;
     timer.selector = aSelector;
-    
+    timer.isTarget = YES;
     return timer;
 }
 
++ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval userInfo:(id)userInfo repeats:(BOOL)repeats dispatchQueue:(dispatch_queue_t)dispatchQueue block:(ZYGCDTimerCallbackBlock)block
+{
+    NSParameterAssert(block);
+    NSParameterAssert(dispatchQueue);
+    
+    ZYGCDTimer *timer = [[ZYGCDTimer alloc] initWithTimeInterval:interval userInfo:userInfo repeats:repeats dispatchQueue:dispatchQueue];
+    timer.block = block;
+    timer.isTarget = NO;
+    return timer;
+}
 
 
 - (void)fire
@@ -114,36 +124,33 @@
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
     if (OSAtomicAnd32OrigBarrier(1, &_timerFlags.timerIsInvalidated)) return;
     
-    if (OSAtomicAnd32OrigBarrier(1, &_timerFlags.timerIsFired)) return;
-
-    OSAtomicTestAndSetBarrier(7, &_timerFlags.timerIsFired);
-
+    if (!OSAtomicAnd32OrigBarrier(1, &_timerFlags.timerIsFired)) {
+        OSAtomicTestAndSetBarrier(7, &_timerFlags.timerIsFired);
+        [self setupTime];
+    }
+    
     if (OSAtomicAnd32OrigBarrier(1, &_timerFlags.timerIsPaused)) {
         OSAtomicTestAndClear(7, &_timerFlags.timerIsPaused);
 #pragma clang diagnostic pop
-        
-        dispatch_resume(self.timer);
-    }else{
         [self setupTime];
+        dispatch_resume(self.timer);
     }
 }
-
 
 
 - (void)invalidate
 {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
-    OSAtomicTestAndClear(7, &_timerFlags.timerIsFired);
     if (!OSAtomicTestAndSetBarrier(7, &_timerFlags.timerIsInvalidated))
-#pragma clang diagnostic pop
     {
+        OSAtomicTestAndClear(7, &_timerFlags.timerIsFired);
+#pragma clang diagnostic pop
         dispatch_source_t timer = self.timer;
         dispatch_async(self.privateSerialQueue, ^{
             dispatch_source_cancel(timer);
         });
     }
-
 }
 
 
@@ -152,10 +159,15 @@
     
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
-    OSAtomicTestAndClear(7, &_timerFlags.timerIsFired);
-    if (!OSAtomicTestAndSetBarrier(7, &_timerFlags.timerIsPaused)) {
+    if (!OSAtomicTestAndSetBarrier(7, &_timerFlags.timerIsPaused))
+    {
+        OSAtomicTestAndClear(7, &_timerFlags.timerIsFired);
 #pragma clang diagnostic pop
-        dispatch_suspend(self.timer);
+        dispatch_source_t timer = self.timer;
+        dispatch_async(self.privateSerialQueue, ^{
+            dispatch_suspend(timer);
+        });
+        
     }
 }
 
@@ -184,9 +196,7 @@
 #pragma mark - 定时器回调
 
 - (void)timerCallback
-{
-    NSLog(@"timerCallback ----- >");
-    
+{    
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
     if (OSAtomicAnd32OrigBarrier(1, &_timerFlags.timerIsInvalidated) || OSAtomicAnd32OrigBarrier(1, &_timerFlags.timerIsPaused))
@@ -195,13 +205,24 @@
         return;
     }
     
-    if (self.target) {
+    self.currentTime += self.interval;
+    self.repeatCount ++;
+    
+    if (self.isTarget) {
+        if (self.target) {
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Warc-performSelector-leaks"
-        [self.target performSelector:self.selector withObject:self];
+            [self.target performSelector:self.selector withObject:self];
 #pragma clang diagnostic pop
+        }else{
+            [self invalidate];
+        }
     }else{
-        [self invalidate];
+        if (self.block) {
+            self.block(self, self.currentTime, self.repeatCount);
+        }else{
+            [self invalidate];
+        }
     }
     
     if (!self.isRepeats)

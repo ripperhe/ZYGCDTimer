@@ -30,10 +30,14 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    self.timer = [ZYGCDTimer timerWithTimeInterval:2 target:self selector:@selector(refresh) userInfo:nil repeats:YES dispatchQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
+    self.timer = [ZYGCDTimer timerWithTimeInterval:0.1 target:self selector:@selector(refresh) userInfo:nil repeats:YES dispatchQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)];
     
     
-    
+    self.timer = [ZYGCDTimer timerWithTimeInterval:0.1 userInfo:nil repeats:YES dispatchQueue:dispatch_get_main_queue() block:^(ZYGCDTimer * _Nonnull timer, NSTimeInterval currentTime, NSInteger repeatCount) {
+       
+        NSLog(@"cout:%zd time: %f", repeatCount, currentTime);
+        
+    }];
 }
 
 
@@ -65,6 +69,7 @@
 
 - (void)test
 {
+    
     dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
     
     dispatch_source_t timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
@@ -97,7 +102,7 @@
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
         NSLog(@"收工");
-        dispatch_source_cancel(self.timer);
+        dispatch_source_cancel(self.tt);
         self.tt = nil;
     });
 
