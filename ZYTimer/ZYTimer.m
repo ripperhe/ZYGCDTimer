@@ -26,9 +26,9 @@
 @property (nonatomic, copy) ZYCallbackBlock callbackBlock;
 
 @property (nonatomic, assign) NSTimeInterval interval;
+@property (nonatomic, strong) id userInfo;
 @property (nonatomic, assign) BOOL isRepeats;
 @property (nonatomic, weak) id lifeDependObject;
-@property (nonatomic, strong) id userInfo;
 
 @end
 
@@ -39,12 +39,15 @@
     NSLog(@"ZYTimer dealloc");
 }
 
-- (instancetype)initWithInterval:(NSTimeInterval)interval repeats:(BOOL)repeats userInfo:(id)userInfo lifeDependObject:(id)lifeDependObject {
+- (instancetype)initWithInterval:(NSTimeInterval)interval
+                        userInfo:(id)userInfo
+                         repeats:(BOOL)repeats
+                lifeDependObject:(id)lifeDependObject {
     if (self = [super init]) {
         self.interval = interval;
+        self.userInfo = userInfo;
         self.isRepeats = repeats;
         self.lifeDependObject = lifeDependObject;
-        self.userInfo = userInfo;
         
         self.isPause = YES;
         self.isValid = YES;
@@ -53,11 +56,16 @@
     return self;
 }
 
-+ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval target:(nonnull id)aTarget selector:(nonnull SEL)aSelector repeats:(BOOL)repeats userInfo:(id)userInfo lifeDependObject:(id)lifeDependObject
++ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval
+                               target:(nonnull id)aTarget
+                             selector:(nonnull SEL)aSelector
+                             userInfo:(id)userInfo
+                              repeats:(BOOL)repeats
+                     lifeDependObject:(id)lifeDependObject
 {
     ZYTimer *timer = [[ZYTimer alloc] initWithInterval:interval
-                                               repeats:repeats
                                               userInfo:userInfo
+                                               repeats:repeats
                                       lifeDependObject:lifeDependObject?lifeDependObject:aTarget];
     timer.aTarget = aTarget;
     timer.aSelector = aSelector;
@@ -65,11 +73,15 @@
     return timer;
 }
 
-+ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats userInfo:(id)userInfo lifeDependObject:(id)lifeDependObject block:(ZYCallbackBlock)block
++ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval
+                             userInfo:(id)userInfo
+                              repeats:(BOOL)repeats
+                     lifeDependObject:(id)lifeDependObject
+                                block:(ZYCallbackBlock)block
 {
     ZYTimer *timer = [[ZYTimer alloc] initWithInterval:interval
-                                               repeats:repeats
                                               userInfo:userInfo
+                                               repeats:repeats
                                       lifeDependObject:lifeDependObject];
     timer.callbackBlock = block;
     timer.isTarget = NO;
@@ -121,26 +133,14 @@
     self.callbackBlock = nil;
     
     self.interval = 0;
+    self.userInfo = nil;
     self.isRepeats = NO;
     self.lifeDependObject = nil;
-    self.userInfo = nil;
 }
 
 #pragma mark - 处理定时器回调
 - (void)handleTimerCallBack
 {
-    if (self.isPause) {
-        NSLog(@"这里应该不会调用吧，先这样吧，保险点");
-        [self pause];
-        return;
-    }
-    
-    if (self.isValid == NO) {
-        NSLog(@"这里应该不会调用吧，先这样吧，保险点");
-        [self invalidate];
-        return;
-    }
-    
     if (self.hasSkipFirstTime == NO) {
         // 开启定时器会立即调用该方法，所以忽略第一次调用
         self.hasSkipFirstTime = YES;

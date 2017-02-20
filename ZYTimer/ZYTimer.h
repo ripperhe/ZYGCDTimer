@@ -14,14 +14,13 @@ typedef void (^ZYCallbackBlock)(ZYTimer * _Nonnull timer, NSTimeInterval current
 
 @interface ZYTimer : NSObject
 
-@property (nonatomic, assign, readonly) NSInteger repeatCount;
+@property (readonly) NSInteger repeatCount;
 
-@property (nonatomic, assign, readonly) NSTimeInterval currentTime;
+@property (readonly) NSTimeInterval currentTime;
 
-@property (nonatomic, assign, readonly) NSTimeInterval interval;
+@property (readonly) NSTimeInterval interval;
 
-@property (nonatomic, strong, readonly, nullable) id userInfo;
-
+@property (readonly, nullable) id userInfo;
 
 
 /**
@@ -30,38 +29,51 @@ typedef void (^ZYCallbackBlock)(ZYTimer * _Nonnull timer, NSTimeInterval current
  @param interval 周期
  @param aTarget 对象
  @param aSelector 方法
- @param repeats 是否重复
  @param userInfo 用户信息
+ @param repeats 是否重复
  @param lifeDependObject 定时器随着该对象的销毁而销毁，默认为 target
  @return ZYTimer 对象
  */
-+ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval target:(nonnull id)aTarget selector:(nonnull SEL)aSelector repeats:(BOOL)repeats userInfo:(nullable id)userInfo lifeDependObject:(nullable id)lifeDependObject;
++ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval
+                                       target:(nonnull id)aTarget
+                                     selector:(nonnull SEL)aSelector
+                                     userInfo:(nullable id)userInfo
+                                      repeats:(BOOL)repeats
+                             lifeDependObject:(nullable id)lifeDependObject;
 
 
 /**
  创建一个定时器
 
  @param interval 周期
- @param repeats 是否重复
  @param userInfo 用户信息
+ @param repeats 是否重复
  @param lifeDependObject 定时器随着该对象的销毁而销毁，不能传空值
  @param block 回调的block
  @return ZYTimer 对象
  */
-+ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval repeats:(BOOL)repeats userInfo:(nullable id)userInfo lifeDependObject:(nonnull id)lifeDependObject block:(nonnull ZYCallbackBlock)block;
++ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval
+                                     userInfo:(nullable id)userInfo
+                                      repeats:(BOOL)repeats
+                             lifeDependObject:(nonnull id)lifeDependObject
+                                        block:(nonnull ZYCallbackBlock)block;
 
 /**
- 开始
+ 开始 | 恢复
  */
 - (void)fire;
 
 /**
  暂停
+ 
+ @note 重新 fire 时，除开 NSTimer 本身误差之外，还会有 <interval 的一个延迟，因为并不知道暂停的时候当前周期已经执行了多久。重新 fire 默认为上一次刚好回调完成，等待一个周期，进行第一次回调。
  */
 - (void)pause;
 
 /**
- 销毁，调用该方法后不可重新 fire
+ 销毁
+ 
+ @note 调用该方法后不可重新 fire，如果不再需要重新开启，建议调用该方法
  */
 - (void)invalidate;
 

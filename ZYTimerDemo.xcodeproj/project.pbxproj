@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		C96C27F71E5543E800C5FFDA /* TableViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C96C27F61E5543E800C5FFDA /* TableViewController.m */; };
+		C982DD5F1E5ABF4200090BEB /* ViewController3.m in Sources */ = {isa = PBXBuildFile; fileRef = C982DD5E1E5ABF4200090BEB /* ViewController3.m */; };
+		C982DD651E5AE48100090BEB /* ZYGCDTimer.m in Sources */ = {isa = PBXBuildFile; fileRef = C982DD641E5AE48100090BEB /* ZYGCDTimer.m */; };
 		C9C206171E5425E700E21707 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C206161E5425E700E21707 /* main.m */; };
 		C9C2061A1E5425E700E21707 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C206191E5425E700E21707 /* AppDelegate.m */; };
 		C9C2061D1E5425E700E21707 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = C9C2061C1E5425E700E21707 /* ViewController.m */; };
@@ -37,8 +38,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		C96C27F51E5543E800C5FFDA /* TableViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TableViewController.h; sourceTree = "<group>"; };
-		C96C27F61E5543E800C5FFDA /* TableViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TableViewController.m; sourceTree = "<group>"; };
+		C982DD5D1E5ABF4200090BEB /* ViewController3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController3.h; sourceTree = "<group>"; };
+		C982DD5E1E5ABF4200090BEB /* ViewController3.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController3.m; sourceTree = "<group>"; };
+		C982DD631E5AE48100090BEB /* ZYGCDTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZYGCDTimer.h; sourceTree = "<group>"; };
+		C982DD641E5AE48100090BEB /* ZYGCDTimer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZYGCDTimer.m; sourceTree = "<group>"; };
 		C9C206121E5425E700E21707 /* ZYTimerDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ZYTimerDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9C206161E5425E700E21707 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		C9C206181E5425E700E21707 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -112,8 +115,8 @@
 				C9C2061C1E5425E700E21707 /* ViewController.m */,
 				C9C206521E544C6000E21707 /* ViewController2.h */,
 				C9C206531E544C6000E21707 /* ViewController2.m */,
-				C96C27F51E5543E800C5FFDA /* TableViewController.h */,
-				C96C27F61E5543E800C5FFDA /* TableViewController.m */,
+				C982DD5D1E5ABF4200090BEB /* ViewController3.h */,
+				C982DD5E1E5ABF4200090BEB /* ViewController3.m */,
 				C9C2064F1E543A2500E21707 /* ZYTest.h */,
 				C9C206501E543A2500E21707 /* ZYTest.m */,
 				C9C2061E1E5425E700E21707 /* Main.storyboard */,
@@ -138,6 +141,8 @@
 			children = (
 				C9C206491E54286300E21707 /* ZYTimer.h */,
 				C9C2064A1E54286300E21707 /* ZYTimer.m */,
+				C982DD631E5AE48100090BEB /* ZYGCDTimer.h */,
+				C982DD641E5AE48100090BEB /* ZYGCDTimer.m */,
 			);
 			path = ZYTimer;
 			sourceTree = "<group>";
@@ -276,11 +281,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9C2064B1E54286300E21707 /* ZYTimer.m in Sources */,
+				C982DD651E5AE48100090BEB /* ZYGCDTimer.m in Sources */,
 				C9C2061D1E5425E700E21707 /* ViewController.m in Sources */,
 				C9C2061A1E5425E700E21707 /* AppDelegate.m in Sources */,
 				C9C206511E543A2500E21707 /* ZYTest.m in Sources */,
 				C9C206171E5425E700E21707 /* main.m in Sources */,
-				C96C27F71E5543E800C5FFDA /* TableViewController.m in Sources */,
+				C982DD5F1E5ABF4200090BEB /* ViewController3.m in Sources */,
 				C9C206541E544C6000E21707 /* ViewController2.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

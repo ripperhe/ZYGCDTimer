@@ -22,31 +22,24 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sc1-fy-IzQ">
-                                <rect key="frame" x="172" y="318" width="31" height="30"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="YVE-RL-1Ff"/>
-                                    <constraint firstAttribute="width" constant="31" id="kGi-XV-V8K"/>
-                                </constraints>
-                                <state key="normal" title="跳转"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Sc1-fy-IzQ">
+                                <rect key="frame" x="151" y="179" width="60" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="NSTimer"/>
                                 <connections>
                                     <segue destination="1aW-2k-f1K" kind="show" id="HYz-xG-kCV"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LUh-F5-tZ9">
-                                <rect key="frame" x="118" y="451" width="138" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d9v-Th-9Zm">
+                                <rect key="frame" x="151" y="375" width="72" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <state key="normal" title="TableViewController"/>
+                                <state key="normal" title="GCD timer"/>
                                 <connections>
-                                    <segue destination="I83-LT-Kzb" kind="show" id="JfL-oL-ZfK"/>
+                                    <segue destination="Y4r-PT-jGO" kind="show" id="UHb-5V-t1m"/>
                                 </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="Sc1-fy-IzQ" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="j4h-Iy-x4y"/>
-                            <constraint firstItem="Sc1-fy-IzQ" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="yBY-Yb-Q9P"/>
-                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="kAw-56-FNK"/>
                 </viewController>
@@ -54,10 +47,64 @@
             </objects>
             <point key="canvasLocation" x="1168.8" y="124.58770614692655"/>
         </scene>
-        <!--View Controller2-->
+        <!--ZYGCDTimer-->
+        <scene sceneID="Fpn-h1-wsO">
+            <objects>
+                <viewController title="ZYGCDTimer" id="Y4r-PT-jGO" customClass="ViewController3" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="q5g-A7-vuL"/>
+                        <viewControllerLayoutGuide type="bottom" id="8UX-ci-8TM"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="dYP-y9-KAO">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="fmk-7X-dqg">
+                                <rect key="frame" x="41" y="270" width="31" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="开始"/>
+                                <connections>
+                                    <action selector="start:" destination="Y4r-PT-jGO" eventType="touchUpInside" id="vdK-Hl-wjy"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0Vt-nj-Qcn">
+                                <rect key="frame" x="172" y="270" width="31" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="暂停"/>
+                                <connections>
+                                    <action selector="pause:" destination="Y4r-PT-jGO" eventType="touchUpInside" id="QTC-iH-vIT"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rsj-4R-0a0">
+                                <rect key="frame" x="304" y="270" width="31" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <state key="normal" title="销毁"/>
+                                <connections>
+                                    <action selector="invalidate:" destination="Y4r-PT-jGO" eventType="touchUpInside" id="GqO-hD-cti"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qBk-Tv-hbX">
+                                <rect key="frame" x="62" y="380" width="250" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <connections>
+                        <outlet property="timelabel" destination="qBk-Tv-hbX" id="kAt-tJ-DH5"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Fvr-am-kGe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2053.5999999999999" y="490.70464767616198"/>
+        </scene>
+        <!--ZYTimer-->
         <scene sceneID="bxQ-zO-1wy">
             <objects>
-                <viewController id="1aW-2k-f1K" customClass="ViewController2" sceneMemberID="viewController">
+                <viewController title="ZYTimer" id="1aW-2k-f1K" customClass="ViewController2" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="mnM-46-ggE"/>
                         <viewControllerLayoutGuide type="bottom" id="xX7-f3-kvQ"/>
@@ -128,35 +175,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Ug8-Sx-wcy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1975.2" y="124.58770614692655"/>
-        </scene>
-        <!--Table View Controller-->
-        <scene sceneID="6Lh-Ou-VRW">
-            <objects>
-                <tableViewController id="I83-LT-Kzb" customClass="TableViewController" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="40u-z0-w7A">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="ihy-BS-7OM">
-                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="ihy-BS-7OM" id="fxK-Lu-uJ7">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43"/>
-                                    <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
-                        <connections>
-                            <outlet property="dataSource" destination="I83-LT-Kzb" id="Ziv-cZ-53H"/>
-                            <outlet property="delegate" destination="I83-LT-Kzb" id="Il9-4a-lBZ"/>
-                        </connections>
-                    </tableView>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="JzK-nt-9h6" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1975" y="854"/>
+            <point key="canvasLocation" x="2020" y="-493"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="Enm-tx-UCO">

@@ -42,17 +42,17 @@ static ZYTest *_obj = nil;
     // 1. target selector
     
     // case1: 默认依赖 target 的生命周期
-//    ZYTimer *timer = [ZYTimer timerWithTimeInterval:0.1 target:self selector:@selector(ceshi:) repeats:YES userInfo:nil lifeDependObject:nil];
+//    ZYTimer *timer = [ZYTimer timerWithTimeInterval:0.1 target:self selector:@selector(ceshi:) userInfo:nil repeats:YES lifeDependObject:nil];
     
     // case2: 虽然 target 不会释放，但是依赖了 self，所以 self 释放的之后 timer 也会释放
 //    _obj = [[ZYTest alloc] init];
-//    ZYTimer *timer = [ZYTimer timerWithTimeInterval:1 target:_obj selector:@selector(life) repeats:YES  userInfo:nil lifeDependObject:nil];
+//    ZYTimer *timer = [ZYTimer timerWithTimeInterval:1 target:_obj selector:@selector(life) userInfo:nil repeats:YES  lifeDependObject:nil];
     
     
     // 2. block
     
     __weak typeof(self) weakSelf = self;
-    ZYTimer *timer = [ZYTimer timerWithTimeInterval:0.1 repeats:YES userInfo:nil lifeDependObject:self block:^(ZYTimer * _Nonnull timer, NSTimeInterval currentTime, NSInteger repeatCount) {
+    ZYTimer *timer = [ZYTimer timerWithTimeInterval:0.1 userInfo:nil repeats:YES lifeDependObject:self block:^(ZYTimer * _Nonnull timer, NSTimeInterval currentTime, NSInteger repeatCount) {
         NSLog(@"count:%zd, timer:%f", repeatCount, currentTime);
         weakSelf.timeLabel.text = [NSString stringWithFormat:@"%f", timer.currentTime];
     }];
