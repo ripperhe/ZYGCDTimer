@@ -1,2 +1,2 @@
-# ZYTimer
+# ZYGCDTimer
 A timer.
