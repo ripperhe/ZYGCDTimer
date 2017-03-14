@@ -497,6 +497,7 @@
 				C96A97201E5BEC4400A8BA4E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C96A97211E5BEC4400A8BA4E /* Build configuration list for PBXNativeTarget "ZYGCDTimerDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -505,6 +506,7 @@
 				C96A97231E5BEC4400A8BA4E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C96A97241E5BEC4400A8BA4E /* Build configuration list for PBXNativeTarget "ZYGCDTimerDemoUITests" */ = {
 			isa = XCConfigurationList;
@@ -513,6 +515,7 @@
 				C96A97261E5BEC4400A8BA4E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -10,13 +10,6 @@
 #import "ZYGCDTimer.h"
 #import <libkern/OSAtomic.h>
 
-/*
- dispatch_resume() 与 dispatch_suspend() 是平衡挂起计数的
- 
- 当一个 dispatch 的 timer 对象为挂起状态，被销毁会导致程序崩溃，所以这里采用重新创建 timer 的方式
- */
-
-
 @interface ZYGCDTimer ()
 {
     struct
@@ -30,6 +23,7 @@
 @property (nonatomic, weak) id target;
 @property (nonatomic, assign) SEL selector;
 @property (nonatomic, copy) ZYGCDTimerCallbackBlock block;
+
 @property (nonatomic, assign) NSTimeInterval interval;
 @property (nonatomic, strong) id userInfo;
 @property (nonatomic, assign) BOOL isRepeats;
@@ -38,8 +32,6 @@
 @property (nonatomic, strong) dispatch_source_t timer;
 
 @property (nonatomic, assign) BOOL isTarget;
-@property (nonatomic, assign) NSTimeInterval currentTime;
-@property (nonatomic, assign) NSInteger repeatCount;
 
 @end
 
@@ -172,7 +164,11 @@
 
 - (void)pause
 {
-    
+    /*
+     dispatch_resume() 与 dispatch_suspend() 是平衡挂起计数的
+     
+     当一个 dispatch 的 timer 对象为挂起状态，被销毁会导致程序崩溃，所以这里采用重新创建 timer 的方式实现 pause 功能
+     */
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored"-Wdeprecated-declarations"
     if (OSAtomicAnd32OrigBarrier(1, &_timerFlags.timerIsInvalidated) || !OSAtomicAnd32OrigBarrier(1, &_timerFlags.timerIsFired)) return;
@@ -209,7 +205,7 @@
     }
 }
 
-#pragma mark - 定时器回调
+#pragma mark - timer callback
 
 - (void)timerCallback
 {    
@@ -220,9 +216,6 @@
     {
         return;
     }
-    
-    self.currentTime += self.interval;
-    self.repeatCount ++;
     
     if (self.isTarget) {
         if (self.target) {
@@ -235,7 +228,7 @@
         }
     }else{
         if (self.block) {
-            self.block(self, self.currentTime, self.repeatCount);
+            self.block(self);
         }else{
             [self invalidate];
         }

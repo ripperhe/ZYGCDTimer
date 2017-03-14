@@ -19,6 +19,8 @@
 
 @property (nonatomic, strong) dispatch_queue_t backgroundQueue;
 
+@property (nonatomic, assign) NSTimeInterval currentTime;;
+
 @end
 
 static const char *BackgroundTimerQueueContext = "BackgroundTimerQueueContext";
@@ -36,29 +38,28 @@ static const char *BackgroundTimerQueueContext = "BackgroundTimerQueueContext";
     
     
     /*
-     1. block 形式
+     1. block
      */
     
     __weak typeof(self) weakSelf = self;
-    self.timer = [ZYGCDTimer timerWithTimeInterval:0.5 userInfo:nil repeats:YES dispatchQueue:dispatch_get_main_queue() block:^(ZYGCDTimer * _Nonnull timer, NSTimeInterval currentTime, NSInteger repeatCount) {
+    self.timer = [ZYGCDTimer timerWithTimeInterval:1.0 userInfo:nil repeats:YES dispatchQueue:dispatch_get_main_queue() block:^(ZYGCDTimer * _Nonnull timer) {
         
         /*
-         在 block 中写 NSAssert 会导致控制器无法释放
-         
-         若要写 NSAssert，可以采取 target selector 的方式
+         在 block 中写 NSAssert 会导致控制器无法释放。若要写 NSAssert，可以采取 target selector 的方式
          */
-//        NSAssert(1, @"There is main thread");
+        //NSAssert(1, @"There is main thread");
         
-        NSLog(@"cout:%zd time: %f", repeatCount, currentTime);
-        weakSelf.timeLabel.text = [NSString stringWithFormat:@"%f",currentTime];
+        weakSelf.currentTime += timer.interval;
+        weakSelf.timeLabel.text = [NSString stringWithFormat:@"%f",weakSelf.currentTime];
     }];
     
     
     
     
     /*
-     2. target selector 形式
+     2. target selector
      */
+    
     self.backgroundQueue = dispatch_queue_create("com.ripperhe.backQueue", DISPATCH_QUEUE_CONCURRENT);
     dispatch_queue_set_specific(self.backgroundQueue, (__bridge const void *)(self), (void *)BackgroundTimerQueueContext, NULL);
     
