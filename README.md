@@ -31,7 +31,7 @@ it, simply add the following line to your Podfile:
 pod "ZYGCDTimer"
 ```
 
-## How to use
+## How To Use
 
 You can use the following method to create a timer, and then use the "fire" method to start the timer.
 
