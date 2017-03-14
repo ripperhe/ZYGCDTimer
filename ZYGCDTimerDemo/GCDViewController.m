@@ -55,7 +55,6 @@ static const char *BackgroundTimerQueueContext = "BackgroundTimerQueueContext";
     
     
     
-    
     /*
      2. target selector
      */
