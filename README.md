@@ -41,7 +41,7 @@ You can use the following method to create a timer, and then use the "fire" meth
 + (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval
                                        target:(nonnull id)aTarget
                                      selector:(nonnull SEL)aSelector
-                                     userInfo:(nullable id)userInfo****
+                                     userInfo:(nullable id)userInfo
                                       repeats:(BOOL)repeats
                                 dispatchQueue:(nonnull dispatch_queue_t)dispatchQueue;
 ```
