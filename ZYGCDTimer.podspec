@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'ZYGCDTimer'
-  s.version          = '0.1.0'
+  s.version          = '0.1.1'
   s.summary          = "A timer that doesn't retain the target and supports being used with GCD queues"
   s.homepage         = 'https://github.com/ripperhe/ZYGCDTimer'
 

@@ -20,7 +20,8 @@ To run the example project, clone the repo, and run directly.
 
 ## Requirements
 
-iOS 8.0 or later
+* iOS 8.0 or later
+* macOS 10.12 or later
 
 ## Installation
 
