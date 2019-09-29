@@ -27,15 +27,12 @@ static const char *BackgroundTimerQueueContext = "BackgroundTimerQueueContext";
 
 @implementation GCDViewController
 
--(void)dealloc
-{
-    NSLog(@"GCDViewController dealloc");
+-(void)dealloc {
+    NSLog(@"%@ dealloc", self);
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    // Do any additional setup after loading the view.
-    
     
     /*
      1. block
@@ -43,18 +40,19 @@ static const char *BackgroundTimerQueueContext = "BackgroundTimerQueueContext";
     
     __weak typeof(self) weakSelf = self;
     self.timer = [ZYGCDTimer timerWithTimeInterval:1.0 userInfo:nil repeats:YES dispatchQueue:dispatch_get_main_queue() block:^(ZYGCDTimer * _Nonnull timer) {
+        __strong typeof(weakSelf) self = weakSelf;
         
-        /*
-         在 block 中写 NSAssert 会导致控制器无法释放。若要写 NSAssert，可以采取 target selector 的方式
-         */
-        //NSAssert(1, @"There is main thread");
-        
-        weakSelf.currentTime += timer.interval;
-        weakSelf.timeLabel.text = [NSString stringWithFormat:@"%f",weakSelf.currentTime];
+        // block 内部使用 self 都需要对 self 弱引用，否则会强持有
+        // PS: NSAssert 宏内部使用了 self，所以用 NSAssert 也需要弱引用
+        NSAssert(NSThread.isMainThread, @"不是主线程");
+        self.currentTime += timer.interval;
+        self.timeLabel.text = [NSString stringWithFormat:@"%f",self.currentTime];
     }];
+    self.timer.tolerance = 0.5;
     
-    
-    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5 * NSEC_PER_SEC)), dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        self.timer.tolerance = 0.8;
+    });
     /*
      2. target selector
      */
@@ -71,8 +69,7 @@ static const char *BackgroundTimerQueueContext = "BackgroundTimerQueueContext";
     [self.backgroundTimer fire];
 }
 
-- (void)backgroundTimerCallback:(ZYGCDTimer *)timer
-{
+- (void)backgroundTimerCallback:(ZYGCDTimer *)timer {
     NSAssert(![NSThread isMainThread], @"There is background thread");
     
     const BOOL result = dispatch_queue_get_specific(self.backgroundQueue, (__bridge const void *)(self)) == BackgroundTimerQueueContext;

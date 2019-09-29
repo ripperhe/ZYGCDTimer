@@ -4,29 +4,30 @@
 [![License](https://img.shields.io/cocoapods/l/ZYGCDTimer.svg?style=flat)](http://cocoapods.org/pods/ZYGCDTimer)
 [![Platform](https://img.shields.io/cocoapods/p/ZYGCDTimer.svg?style=flat)](http://cocoapods.org/pods/ZYGCDTimer)
 
-ZYGCDTimer is based on the [MSWeakTimer](https://github.com/mindsnacks/MSWeakTimer).
+ZYGCDTimer 主要用于替代 `NSTimer`，不会强持有 target，基于 [MSWeakTimer](https://github.com/mindsnacks/MSWeakTimer) 进行修改的，本质上是个 `GCD` 定时器。
 
 ## Features
 
-* **Create a timer with block**
-			
-* **Pause the timer**
+- [x] 弱引用 target
+- [x] target 销毁之后，自动 `invalidate`
+- [x] 支持 `block` 创建定时器
+- [x] 支持设置 `GCD` queue
+- [x] 支持暂停定时器
 
 ## Example
 
-To run the example project, clone the repo, and run directly.
+![](zygcdtimer.png)
 
-![](https://raw.githubusercontent.com/ripperhe/Resource/master/20170314/gcdtimer.png)
+下载 demo 直接运行即可
 
 ## Requirements
 
-* iOS 8.0 or later
-* macOS 10.12 or later
+* iOS 8.0+
+* macOS 10.12+
 
 ## Installation
 
-ZYGCDTimer is available through [CocoaPods](http://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+ZYGCDTimer 支持 [CocoaPods](http://cocoapods.org) 安装。在 `Podfile` 中写入以下文本然后执行 `pod install` 即可：
 
 ```ruby
 pod "ZYGCDTimer"
@@ -34,27 +35,43 @@ pod "ZYGCDTimer"
 
 ## Usage
 
-You can use the following method to create a timer, and then use the "fire" method to start the timer.
-
-* Target-selector
-
-```objc****
-+ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval
-                                       target:(nonnull id)aTarget
-                                     selector:(nonnull SEL)aSelector
-                                     userInfo:(nullable id)userInfo
-                                      repeats:(BOOL)repeats
-                                dispatchQueue:(nonnull dispatch_queue_t)dispatchQueue;
-```
-
-* Block
+Target selector 创建定时器
 
 ```objc
-+ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval
++ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval
+                                       target:(id)aTarget
+                                     selector:(SEL)aSelector
                                      userInfo:(nullable id)userInfo
                                       repeats:(BOOL)repeats
-                                dispatchQueue:(nonnull dispatch_queue_t)dispatchQueue
-                                        block:(nonnull ZYGCDTimerCallbackBlock)block;
+                                dispatchQueue:(dispatch_queue_t)dispatchQueue;
+```
+
+Block 创建定时器
+
+```objc
++ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval
+                                     userInfo:(nullable id)userInfo
+                                      repeats:(BOOL)repeats
+                                dispatchQueue:(dispatch_queue_t)dispatchQueue
+                                        block:(void (^)(ZYGCDTimer *timer))block;
+```
+
+启用定时器
+
+```objc
+- (void)fire;
+```
+
+无效定时器
+
+```objc
+- (void)invalidate;
+```
+
+暂停定时器
+
+```objc
+- (void)pause;
 ```
 
 ## Author

@@ -8,70 +8,58 @@
 //
 
 #import <Foundation/Foundation.h>
-@class ZYGCDTimer;
 
-typedef void (^ZYGCDTimerCallbackBlock)(ZYGCDTimer * _Nonnull timer);
+NS_ASSUME_NONNULL_BEGIN
 
 @interface ZYGCDTimer : NSObject
 
+/// 调用时间间隔
 @property (readonly) NSTimeInterval interval;
+
+/// 用户信息
 @property (readonly) id _Nullable userInfo;
 
-/** The error range of the timer, default is 0.1. Even if the tolerance is set to 0.0, the timer will also exist error. */
+/// 容忍度，单位秒，默认为 0.1；即便设置为 0.0 仍然存在误差
 @property (atomic, assign) NSTimeInterval tolerance;
 
-
-/**
- Create a timer
-
- @param interval how frequently `selector` will be invoked on `target`.
- @param aTarget target object
- @param aSelector selector
- @param userInfo additional information
- @param repeats if `YES`, `selector` will be invoked on `target` until the `ZYGCDTimer` object is deallocated or until you call `invalidate`. If `NO`, it will only be invoked once.
- @param dispatchQueue the queue where the delegate method will be dispatched. It can be either a serial or concurrent queue.
- @return timer
- */
-+ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval
-                                       target:(nonnull id)aTarget
-                                     selector:(nonnull SEL)aSelector
+/// 创建一个定时器
+/// @param interval 调用的时间间隔
+/// @param aTarget 对象
+/// @param aSelector 方法选择器
+/// @param userInfo 用户信息
+/// @param repeats 是否重复
+/// @param dispatchQueue 派发事件的队列，可以是串行队列或并发队列
++ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval
+                                       target:(id)aTarget
+                                     selector:(SEL)aSelector
                                      userInfo:(nullable id)userInfo
                                       repeats:(BOOL)repeats
-                                dispatchQueue:(nonnull dispatch_queue_t)dispatchQueue;
+                                dispatchQueue:(dispatch_queue_t)dispatchQueue;
 
-/**
- Create a timer
-
- @param interval how frequently `block` will be invoked.
- @param userInfo additional information
- @param repeats if `YES`, `block` will be invoked until the `ZYGCDTimer` object is deallocated or until you call `invalidate`. If `NO`, it will only be invoked once.
- @param dispatchQueue the queue where the delegate method will be dispatched. It can be either a serial or concurrent queue.
- @param block block
- @return timer
- */
-+ (nonnull instancetype)timerWithTimeInterval:(NSTimeInterval)interval
+/// 创建一个定时器
+/// @param interval 调用的时间间隔
+/// @param userInfo 用户信息
+/// @param repeats 是否重复
+/// @param dispatchQueue 派发事件的队列，可以是串行队列或并发队列
+/// @param block 定时器事件
++ (instancetype)timerWithTimeInterval:(NSTimeInterval)interval
                                      userInfo:(nullable id)userInfo
                                       repeats:(BOOL)repeats
-                                dispatchQueue:(nonnull dispatch_queue_t)dispatchQueue
-                                        block:(nonnull ZYGCDTimerCallbackBlock)block;
+                                dispatchQueue:(dispatch_queue_t)dispatchQueue
+                                        block:(void (^)(ZYGCDTimer *timer))block;
 
-/**
- Start the timer
- */
+/// 启用定时器
 - (void)fire;
 
-/**
- Invalidate the timer
- 
- @note After this method is used, it is not possible to restart the timer
- */
+/// 无效定时器
+/// @note 调用该方法之后，将无法重启定时器
+/// @note 如果是用 target selector 方式启用的定时器，target 销毁之后的第一次调用 selector 的时机会自动调用本方法
 - (void)invalidate;
 
-/**
- Pause the timer
- 
- @note Use 'fire' to restart the timer
- */
+/// 暂停定时器
+/// @note 调用本方法之后，可以用 fire 重启定时器
 - (void)pause;
 
 @end
+
+NS_ASSUME_NONNULL_END
