@@ -8,10 +8,10 @@ ZYGCDTimer 主要用于替代 `NSTimer`，不会强持有 target，基于 [MSWea
 
 ## Features
 
-- [x] 弱引用 target
-- [x] target 销毁之后，自动 `invalidate`
+- [x] 弱引用 `target`
+- [x] `target` 销毁之后，自动调用 `invalidate`
 - [x] 支持 `block` 创建定时器
-- [x] 支持设置 `GCD` queue
+- [x] 支持设置 `GCD queue`
 - [x] 支持暂停定时器
 
 ## Example
@@ -27,7 +27,7 @@ ZYGCDTimer 主要用于替代 `NSTimer`，不会强持有 target，基于 [MSWea
 
 ## Installation
 
-ZYGCDTimer 支持 [CocoaPods](http://cocoapods.org) 安装。在 `Podfile` 中写入以下文本然后执行 `pod install` 即可：
+ZYGCDTimer 支持 [CocoaPods](http://cocoapods.org) 安装。在 `Podfile` 中写入以下文本，然后执行 `pod install` 即可：
 
 ```ruby
 pod "ZYGCDTimer"
@@ -35,7 +35,7 @@ pod "ZYGCDTimer"
 
 ## Usage
 
-Target selector 创建定时器
+使用 `target-selector` 创建定时器
 
 ```objc
 + (instancetype)timerWithTimeInterval:(NSTimeInterval)interval
@@ -46,7 +46,7 @@ Target selector 创建定时器
                                 dispatchQueue:(dispatch_queue_t)dispatchQueue;
 ```
 
-Block 创建定时器
+使用 `block` 创建定时器
 
 ```objc
 + (instancetype)timerWithTimeInterval:(NSTimeInterval)interval
